@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ---
 title: "Markdown_report"
 author: "Luuk Torn"
@@ -25,3 +26,37 @@ In this project, we aim to find predictors in weather data (such as humidity and
 4.  Calculate metrics that summarize phenophases per time period
 5.  Extracting subsets of weather data that are of interest
 6.  Analyze the predictive performance of weather parameters on the phenophase metrics over time
+
+=======
+---
+title: "Markdown_report"
+author: "Luuk Torn"
+date: "2025-04-09"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Summary Report group F4
+
+## Influences of weather on vegetation phenology of 6 habitat types in the Hoge Veluwe
+
+#### Introduction
+
+Camera traps have long been used to give information on the behavior and ecology of animals. Nowadays, due to the emergence of algorithms used for image analysis, analyzing camera trap data has become much faster and more predictive. Camera traps are not only useful for gathering data about animals, but also about vegetation. Information from these so-called phenocams can be used to get insight into changes in vegetation over a period of time, known as phenology. For instance, images can provide information about the phenophase of the vegetation: the onset of blooming of certain flowers, the emergence of the first green leaves during spring, or the start of the coloring of leaves in autumn. These phenology metrics can then be explained and even predicted by searching for correlations with abiotic factors, such as weather patterns. 
+
+In this project, we aim to find predictors in weather data (such as humidity and sunlight) to explain patterns in phenology metrics across six different habitat types in the Hoge Veluwe. We will be using the data from 56-70 camera's which have been taking photo's every day at noon for multiple years. To achieve this, the following steps will be taken: 
+
+1.  Determining the vegetation region of interest (ROI) inside the images
+2.  Filtering out deviating images based on criteria
+3.  Classify the vegetation in the images into phenophase groups based on thresholds
+4.  Calculate metrics that summarize phenophases per time period
+5.  Extracting subsets of weather data that are of interest
+6.  Analyze the predictive performance of weather parameters on the phenophase metrics over time
+
+#### 1. Determining ROI
+
+The images from the Hoge Veluwe data   
+>>>>>>> 04345d4b51ae3a574b5789b9649160aed4d02742
