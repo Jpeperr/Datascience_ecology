@@ -21,10 +21,11 @@ In this project, we aim to find predictors in weather data (such as humidity and
 
 1.  Determining the vegetation region of interest (ROI) inside the images
 2.  Filtering out deviating images based on criteria
-3.  Classify the vegetation in the images into phenophase groups based on thresholds
-4.  Calculate metrics that summarize phenophases per time period
-5.  Extracting subsets of weather data that are of interest
-6.  Analyze the predictive performance of weather parameters on the phenophase metrics over time
+3.  Curve fitting on change in green chromatic coordinates (Gcc) over time 
+4.  Classify the vegetation in the images into phenophase groups based on change in Gcc
+5.  Calculate metrics that summarize phenophases per time period
+6.  Extracting subsets of weather data that are of interest
+7.  Analyze the predictive performance of weather parameters on the phenophase metrics over time
 
 #### 1. Determining ROI
 
