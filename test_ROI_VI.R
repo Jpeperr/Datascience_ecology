@@ -64,9 +64,8 @@ file.rename(ROI_from, ROI_to)
 img_proc_folder <- "data/processed/img_proc_folder"  # where to store renamed files
 
 # Create the processed folder if it doesn't exist
-if (!dir.exists(img_proc_folder)) {
-  dir.create(img_proc_folder, recursive = TRUE)
-}
+recreate_folder(img_proc_folder)
+
 
 
 
