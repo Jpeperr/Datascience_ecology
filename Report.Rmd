@@ -29,4 +29,4 @@ In this project, we aim to find predictors in weather data (such as humidity and
 
 #### 1. Determining ROI
 
-The images from the Hoge Veluwe data   
+The images from the Hoge Veluwe data  
