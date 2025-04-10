@@ -15,6 +15,13 @@ weather <- weather %>%
   select(-YYYYMMDD) %>% 
   select(date, everything())
 
+
+# Split the YYYYMMDD columns into "year", "month" and "day"
+weather <- weather %>% 
+  mutate(year = year(date), month = month(date), day = day(date)) %>% 
+  select(date, year, month, day, everything())
+
+
 # Remove spaces in the titles of the columns
 
 weather <- weather %>%
@@ -26,11 +33,23 @@ weather <- weather %>%
   mutate(across(where(is.character), ~ na_if(trimws(.x), "")))
 
 
-# Do some exploration
+# Summarize some weather statistics
 
 summary <- weather %>% 
-  drop_na(UG) %>% 
+  mutate(UG = as.numeric(UG)) %>% 
+  drop_na(UG, ) %>% 
   summarize_by_time(date, 
-                    .by = "month",
-                    mean_humidity = mean(UG, drop_na = T))
+                    .by = "3 months",
+                    mean_humidity = mean(UG, na.rm = T),
+                    )
+  
+
+# Visualize mean humidity per 3 months
+
+ggplot(summary, aes(x = date, y = mean_humidity)) +
+  geom_point() +
+  geom_line() +
+  theme_minimal() +
+  geom_smooth(stat = "smooth")
+
 
