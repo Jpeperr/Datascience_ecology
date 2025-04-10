@@ -16,15 +16,15 @@ auto_install_package(c("tidyverse", "phenofit", "bfast", "phenocamr", "phenopix"
 #' "data" contains a "raw" folder (with raw image data) and a "processed" folder to store results.
 
 # 🔁 Loop over multiple site folders
-site_ids <- c("H5R0-01", "H5R0-02")  # Add more site IDs as needed
+site_ids <- c("sample")  # Add more site IDs as needed , "H5R0-02" "H5R0-01"
 
 for (site in site_ids) {
   cat("\n⏳ Processing site:", site, "\n")
   
   # Step 1: Set your paths (dynamic based on site)
   img_folder <- file.path("data/raw/data", site)
-  roi_folder <- file.path("data/processed/roi_output",  paste0(site))
-  images_folder <-file.path("data/processed/roi_output",  paste0(site), "images")
+  roi_folder <- file.path("data/processed/roi_output", site)
+  images_folder <-file.path("data/processed/roi_output",  site, "images")
   roi_file <- file.path(roi_folder, "imagesroi.data.Rdata")
   vi_folder <- file.path("data/processed/vi_output", site)
   date.code <- "yyyy-mm-dd"
@@ -78,8 +78,8 @@ for (site in site_ids) {
   )
   
   # Move VI result
-  VI_from <- file.path("data/processed", "vi_outputVI.data.Rdata")
-  VI_to <- file.path(vi_folder, paste0("vi_outputVI_", site, ".Rdata"))
+  VI_from <- file.path("data/processed/vi_output", paste0(site,  "VI.data.Rdata"))
+  VI_to <- file.path(vi_folder, paste0(site,"VI.Rdata"))
   file.rename(VI_from, VI_to)
 }
 
