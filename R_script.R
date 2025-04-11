@@ -29,6 +29,7 @@ for (site in site_ids) {
   vi_folder <- file.path("data/processed/vi_output", site)
   date.code <- "yyyy-mm-dd"
   filter <- file.path("H5_filter", site, "bad")
+  roi_input_folder <- file.path("data/input", site)
   
   # Function to (re)create a folder: deletes existing and makes a fresh one
   recreate_folder <- function(folder_path) {
@@ -54,18 +55,27 @@ for (site in site_ids) {
   cat("  Filtered out:", length(bad_images), "\n")
   cat("  Remaining images:", length(image_files), "\n")
   
-  DrawMULTIROI(
-    path_img_ref = image_files[1],
-    path_ROIs = images_folder,
-    roi.names = "RO1",
-    nroi = 1
-  )
+  use_input_roi <- readline(prompt = "Do you want to use a predefined ROI? (y/n): ")
   
-  # Define source and destination paths
-  ROI_from <- file.path(roi_file)
-  ROI_to <- file.path(roi_folder, "roi.data.Rdata")
-  file.rename(ROI_from, ROI_to)
-
+  if (tolower(use_input_roi) == "n") {
+    DrawMULTIROI(
+      path_img_ref = image_files[1],
+      path_ROIs = images_folder,
+      roi.names = "RO1",
+      nroi = 1
+    )
+  
+  
+    # Define source and destination paths
+    ROI_from <- file.path(roi_file)
+    ROI_to <- file.path(roi_folder, "roi.data.Rdata")
+    file.rename(ROI_from, ROI_to)
+  }
+  
+  if (tolower(use_input_roi) == "y") {
+    roi_folder = roi_input_folder
+  }
+  
   # Step 5: Extract Vegetation Indices (VIs)
   extractVIs(
     img.path = img_folder,
