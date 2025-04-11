@@ -37,7 +37,7 @@ weather <- weather %>%
 
 # Summarize some weather statistics
 
-## Filter data to exclude records from this year (incomplete)
+## Filter data to exclude records from 2025 (incomplete)
 weather <- weather %>% 
   filter(year != "2025")
 
@@ -78,16 +78,8 @@ summary %>% plot_time_series(
 )
 
 
-# Making a model to compare humidity and rainfall
 
-## First scaling the numeric variables
-summary_scaled <- summary %>% 
-  mutate(across(where(is.numeric), ~ (.x - mean(.x)) / sd(.x)))
 
-## Splitting data into train and test
-
-main_split <- initial_time_split(summary_scaled, group = "IDburst", prop = 3/4)
-main_split
 
 
 

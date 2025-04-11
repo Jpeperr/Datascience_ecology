@@ -30,4 +30,5 @@ In this project, we aim to find predictors in weather data (such as humidity and
 
 #### 1. Determining ROI
 
-One image from the same site contain depictions of multiple vegetation types. To facilitate later analysis, a region of interest (ROI) must be drawn around the area in the pictures of one site in which a specific vegetation type is present. For instance, in the oak scrubland, the focus could be on the oak canopy, but also on the shrubs or grasses on the ground. The Phenopix package [@filippa2016] provides a function to draw the ROI. 
+One image from the same site contain depictions of multiple vegetation types. To facilitate later analysis, a region of interest (ROI) must be drawn around the area in the pictures of one site in which a specific vegetation type is present. For instance, in the oak scrubland, the focus could be on the oak canopy, but also on the shrubs or grasses on the ground. The Phenopix package [@filippa2016] provides a function to draw the ROI. We first focus on the canopy of oak forests. In code below, there is an option to draw the ROI yourself, or use a pre-drawn ROI.
+
