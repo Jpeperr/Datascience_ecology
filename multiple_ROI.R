@@ -21,7 +21,7 @@ auto_install_package(c("tidyverse", "phenofit", "bfast", "phenocamr", "phenopix"
 
 
 # Step 1: Set your paths
-img_folder <- "data/raw/data/H5R0-01"  # <-- replace with your image folder path
+img_folder <- "data/raw/data/H1R0-02/"  # <-- replace with your image folder path
 roi_folder <- "data/processed/roi_output"                  # folder to save ROI image previews
 roi_file <- "data/processed/roi_output/roi.data.Rdata"                # path to saved ROI definition
 vi_folder <- "data/processed/vi_output"             # optional: where to save VI output
@@ -72,12 +72,6 @@ plot(roi.data$RO2$mask, main = "RO2 Mask")
 
 # Move the file
 file.rename(ROI_from, ROI_to)
-
-# Plot the mask of the ROI
-library(raster)
-plot(roi.data$roi1$mask) # ?? 
-
-
 
 img_proc_folder <- "data/processed/img_proc_folder"  # where to store renamed files
 
@@ -151,5 +145,22 @@ RO2 %>%
   ggplot(mapping = aes(x = date, y = g.av)) + 
   geom_line() + 
   theme_minimal()
+
+vi_2019_RO1 <- RO1 %>%
+  filter(year(date) == 2019) %>%
+  arrange(date) 
+
+vi_2019_RO2 <- RO2 %>%
+  filter(year(date) == 2019) %>%
+  arrange(date) 
+
+gcc_2019_RO1 <- zoo(vi_2019_RO1$g.av, order.by = vi_season$date)
+gcc_2019_RO2 <- zoo(vi_2019_RO2$g.av, order.by = vi_season$date)
+
+# Now try greenExplore!
+explored_RO1 <- greenExplore(gcc_2019_RO1)
+explored_RO2 <- greenExplore(gcc_2019_RO2)
+plotExplore(explored_RO1)
+plotExplore(explored_RO2)
 
 

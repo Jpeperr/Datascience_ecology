@@ -16,7 +16,7 @@ auto_install_package(c("tidyverse", "phenofit", "bfast", "phenocamr", "phenopix"
 #' "data" contains a "raw" folder (with raw image data) and a "processed" folder to store results.
 
 # 🔁 Loop over multiple site folders
-site_ids <- c("sample")  # Add more site IDs as needed , "H5R0-02" "H5R0-01"
+site_ids <- c("H5R0-01")  # Add more site IDs as needed , "H5R0-02" "H5R0-01"
 
 for (site in site_ids) {
   cat("\n⏳ Processing site:", site, "\n")
