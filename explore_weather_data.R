@@ -47,10 +47,16 @@ summary <- weather %>%
   mutate(TG = as.numeric(TG)) %>% 
   drop_na(UG, RH, TG) %>% 
   summarize_by_time(date, 
+                    .by = "month",
+                    mean_humidity = mean(UG, na.rm = T),
+                    mean_rainfall = mean(RH, na.rm = T),
+                    BIO1 = mean(TG, na.rm = T) /10)
+  summarize_by_time(date, 
                     .by = "year",
                     mean_humidity = mean(UG, na.rm = T),
                     mean_rainfall = mean(RH, na.rm = T),
-                    mean_temp = mean(TG, na.rm = T) /10)
+                    BIO1 = mean(TG, na.rm = T) /10)
+
   
 # Visualize mean humidity per year
 
@@ -73,7 +79,7 @@ summary %>% plot_time_series(
 )
 
 summary %>% plot_time_series(
-  .date_var = date, mean_temp,
+  .date_var = date, BIO1,
   .smooth = T
 )
 
