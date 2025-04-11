@@ -3,6 +3,7 @@ title: "Markdown_report"
 author: "Luuk Torn"
 date: "2025-04-09"
 output: html_document
+bibliography: bibliography.bib
 ---
 
 ```{r setup, include=FALSE}
@@ -21,7 +22,7 @@ In this project, we aim to find predictors in weather data (such as humidity and
 
 1.  Determining the vegetation region of interest (ROI) inside the images
 2.  Filtering out deviating images based on criteria
-3.  Curve fitting on change in green chromatic coordinates (Gcc) over time 
+3.  Curve fitting on change in green chromatic coordinates (Gcc) over time
 4.  Classify the vegetation in the images into phenophase groups based on change in Gcc
 5.  Calculate metrics that summarize phenophases per time period (?)
 6.  Extracting subsets of weather data that are of interest
@@ -29,4 +30,4 @@ In this project, we aim to find predictors in weather data (such as humidity and
 
 #### 1. Determining ROI
 
-The images from the Hoge Veluwe data  
+One image from the same site contain depictions of multiple vegetation types. To facilitate later analysis, a region of interest (ROI) must be drawn around the area in the pictures of one site in which a specific vegetation type is present. For instance, in the oak scrubland, the focus could be on the oak canopy, but also on the shrubs or grasses on the ground. The Phenopix package [@filippa2016] provides a function to draw the ROI. 
