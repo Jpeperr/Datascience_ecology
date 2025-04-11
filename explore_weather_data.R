@@ -3,6 +3,7 @@
 # Load the required packages
 library(tidyverse)
 library(timetk)
+library(tidymodels)
 
 # Load the data in a tibble
 setwd("C:/Users/Luuk/OneDrive - Wageningen University & Research/Master Jaar 1/7. Data Science for Ecology/Challenge/Datascience_ecology")
@@ -36,14 +37,20 @@ weather <- weather %>%
 
 # Summarize some weather statistics
 
+## Filter data to exclude records from this year (incomplete)
+weather <- weather %>% 
+  filter(year != "2025")
+
 summary <- weather %>% 
   mutate(UG = as.numeric(UG)) %>% 
   mutate(RH = as.numeric(RH)) %>% 
-  drop_na(UG, RH) %>% 
+  mutate(TG = as.numeric(TG)) %>% 
+  drop_na(UG, RH, TG) %>% 
   summarize_by_time(date, 
                     .by = "year",
                     mean_humidity = mean(UG, na.rm = T),
-                    mean_rainfall = mean(RH, na.rm = T))
+                    mean_rainfall = mean(RH, na.rm = T),
+                    mean_temp = mean(TG, na.rm = T) /10)
   
 # Visualize mean humidity per year
 
@@ -58,10 +65,15 @@ summary %>% plot_time_series(
   .smooth = T
 )
 
-# Visualize mean precipitation per year
+# Visualize mean precipitation and temp per year
 
 summary %>% plot_time_series(
   .date_var = date, mean_rainfall,
+  .smooth = T
+)
+
+summary %>% plot_time_series(
+  .date_var = date, mean_temp,
   .smooth = T
 )
 
@@ -69,9 +81,13 @@ summary %>% plot_time_series(
 # Making a model to compare humidity and rainfall
 
 ## First scaling the numeric variables
-dat %>% 
+summary_scaled <- summary %>% 
   mutate(across(where(is.numeric), ~ (.x - mean(.x)) / sd(.x)))
 
+## Splitting data into train and test
+
+main_split <- initial_time_split(summary_scaled, group = "IDburst", prop = 3/4)
+main_split
 
 
 
