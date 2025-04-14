@@ -4,11 +4,17 @@
 library(tidyverse)
 library(timetk)
 library(tidymodels)
+library(writexl)
 
 # Load the data in a tibble
-setwd("C:/Users/Luuk/OneDrive - Wageningen University & Research/Master Jaar 1/7. Data Science for Ecology/Challenge/Datascience_ecology")
+setwd("C:/Users/Luuk/OneDrive - 
+      Wageningen University & Research/Master Jaar 1/7. 
+      Data Science for Ecology/Challenge/Datascience_ecology") # Set you own WD
 weather <- read_delim("data/raw/Deel_airport_weather_data/etmgeg_275_without_metadata.txt", 
                       delim = ",") 
+
+# Data wrangling on raw data
+##############################################################################################
 
 # Convert the YYYYMMDD column to a R date object and rename to "date"
 
@@ -18,10 +24,20 @@ weather <- weather %>%
   select(date, everything())
 
 
-# Split the YYYYMMDD columns into "year", "month" and "day" for later use
+# Split the YYYYMMDD columns into 
+# "year", "month", "day", "quarter and "season" for later use
 weather <- weather %>% 
-  mutate(year = year(date), month = month(date), day = day(date), quarter = quarter(date)) %>% 
-  select(date, year, month, day, quarter, everything())
+  mutate(year = year(date), month = month(date), day = day(date), 
+         quarter = quarter(date)) %>% 
+  mutate(
+    season = case_when(
+      month %in% 3:5 ~ "Spring",
+      month %in% 6:8 ~ "Summer",
+      month %in% 9:11 ~ "Autumn", 
+      month %in% c(12, 1, 2) ~ "Winter" 
+    )) %>% 
+  select(date, year, month, day, quarter, season, everything())
+  
 
 
 # Remove spaces in the titles of the columns
@@ -34,17 +50,15 @@ weather <- weather %>%
 weather <- weather %>%
   mutate(across(where(is.character), ~ na_if(trimws(.x), "")))
 
-
-# Summarize some weather statistics
-
-
-# 1. Prepare data
+# Making the variables numeric expect the dates
 
 weather <- weather %>%
   mutate(across(
-    .cols = -c(date, month, year, day, quarter),
+    .cols = -c(date, month, year, day, quarter, season),
     .fns = ~ as.numeric(.)
-  ))
+  )) 
+
+# Convert some variables to appropriate units
 
 weather <- weather %>%
   mutate(
@@ -55,7 +69,11 @@ weather <- weather %>%
   )
 
 
-# 2. Summarize monthly
+# Making new weather variabls using WorldClim weather statistics
+##############################################################################################
+
+
+# 1. Summarize per month
 monthly_weather <- weather %>%
   group_by(year, month) %>%
   summarize(
@@ -68,7 +86,7 @@ monthly_weather <- weather %>%
     .groups = 'drop'
   )
 
-# 3. Summarize quarterly
+# 2. Summarize per quarter
 quarterly_weather <- weather %>%
   group_by(year, quarter) %>%
   summarize(
@@ -77,7 +95,7 @@ quarterly_weather <- weather %>%
     .groups = 'drop'
   )
 
-# 4. Summarize annual
+# 3. Summarize per year
 annual_weather <- weather %>%
   group_by(year) %>%
   summarize(
@@ -88,7 +106,7 @@ annual_weather <- weather %>%
     .groups = 'drop'
   )
 
-# 5. Calculate other BIO variables
+# 4. Calculate other BIO variables
 
 # BIO2: Mean Diurnal Range (Mean of monthly (max temp - min temp))
 BIO2_data <- monthly_weather %>%
@@ -158,7 +176,22 @@ BIO16_19_data <- quarterly_weather %>%
     .groups = 'drop'
   )
 
-# 6. Merge everything together
+# Summarize mean temperature and sum of precipiation per season
+seasonal_weather <- weather %>%
+  group_by(year, season) %>%
+  summarize(
+    t.mean = mean(TG, na.rm = TRUE),
+    prec.sum = sum(RH, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  pivot_wider(
+    names_from = season,
+    values_from = c(t.mean, prec.sum),
+    names_glue = "{.value}_{season}"
+  )
+
+
+# 5. Merge everything together
 BIO_summary <- annual_weather %>%
   left_join(BIO2_data, by = "year") %>%
   left_join(BIO3_data, by = "year") %>%
@@ -166,17 +199,27 @@ BIO_summary <- annual_weather %>%
   left_join(BIO7_data %>% select(year, BIO7), by = "year") %>%
   left_join(BIO8_11_data, by = "year") %>%
   left_join(BIO13_14_data, by = "year") %>%
-  left_join(BIO16_19_data, by = "year")
+  left_join(BIO16_19_data, by = "year") %>% 
+  left_join(seasonal_weather, by = "year")
 
-# View final data
-print(BIO_summary)
-
-
-
-
+# 6. Remove the years before 2012 and after 2020
+BIO_summary <- BIO_summary %>% 
+  filter(year >= 2012, year <= 2020)
 
 
 
+# 7. Export the table to excel
+write_xlsx(BIO_summary, 
+           path = "data/processed/BIO_clim_processed.xlsx")
+
+
+
+
+
+# Visualizing some variables
+##############################################################################################
+
+# Making a summary table
 
 summary <- weather %>% 
   mutate(UG = as.numeric(UG)) %>% 
@@ -184,16 +227,10 @@ summary <- weather %>%
   mutate(TG = as.numeric(TG)) %>% 
   drop_na(UG, RH, TG) %>% 
   summarize_by_time(date, 
-                    .by = "month",
-                    mean_humidity = mean(UG, na.rm = T),
-                    mean_rainfall = mean(RH, na.rm = T),
-                    BIO1 = mean(TG, na.rm = T) /10)
-  summarize_by_time(date, 
                     .by = "year",
                     mean_humidity = mean(UG, na.rm = T),
                     mean_rainfall = mean(RH, na.rm = T),
                     BIO1 = mean(TG, na.rm = T) /10)
-
   
 # Visualize mean humidity per year
 
@@ -219,7 +256,6 @@ summary %>% plot_time_series(
   .date_var = date, BIO1,
   .smooth = T
 )
-
 
 
 
