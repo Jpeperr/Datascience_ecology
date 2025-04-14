@@ -176,7 +176,7 @@ BIO16_19_data <- quarterly_weather %>%
     .groups = 'drop'
   )
 
-# Summarize mean temperature and precipiation per season
+# Summarize mean temperature and sum of precipiation per season
 seasonal_weather <- weather %>%
   group_by(year, season) %>%
   summarize(
@@ -211,8 +211,6 @@ BIO_summary <- BIO_summary %>%
 # 7. Export the table to excel
 write_xlsx(BIO_summary, 
            path = "data/processed/BIO_clim_processed.xlsx")
-
-
 
 
 
