@@ -12,7 +12,8 @@ auto_install_package(c("tidyverse", "phenofit", "bfast", "phenocamr", "phenopix"
                        "imager", "tools", "zoo"))
 
 ### SITE CONFIGURATION
-site_ids <- c("H5R0-01", "H5R0-02", "H5R0-03", "H5R0-04")
+
+site_ids <- c("H5R0-01","H5R0-02", "H5R0-03", "H5R0-04")
 filter_groups <- list(
   H5 = "H5_filter"
 )
