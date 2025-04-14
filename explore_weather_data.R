@@ -4,11 +4,17 @@
 library(tidyverse)
 library(timetk)
 library(tidymodels)
+library(writexl)
 
 # Load the data in a tibble
-setwd("C:/Users/Luuk/OneDrive - Wageningen University & Research/Master Jaar 1/7. Data Science for Ecology/Challenge/Datascience_ecology")
+setwd("C:/Users/Luuk/OneDrive - 
+      Wageningen University & Research/Master Jaar 1/7. 
+      Data Science for Ecology/Challenge/Datascience_ecology") # Set you own WD
 weather <- read_delim("data/raw/Deel_airport_weather_data/etmgeg_275_without_metadata.txt", 
                       delim = ",") 
+
+# Data wrangling
+##############################################################################################
 
 # Convert the YYYYMMDD column to a R date object and rename to "date"
 
@@ -34,9 +40,8 @@ weather <- weather %>%
 weather <- weather %>%
   mutate(across(where(is.character), ~ na_if(trimws(.x), "")))
 
-
-# Summarize some weather statistics
-
+# Making new weather variabls using WorldClim weather statistics
+##############################################################################################
 
 # 1. Prepare data
 
@@ -168,16 +173,24 @@ BIO_summary <- annual_weather %>%
   left_join(BIO13_14_data, by = "year") %>%
   left_join(BIO16_19_data, by = "year")
 
-# View final data
-print(BIO_summary)
+# 7. Remove the years before 2012 and after 2020
+BIO_summary <- BIO_summary %>% 
+  filter(year >= 2012, year <= 2020)
+
+# 8. Export the table to excel
+write_xlsx(BIO_summary, 
+           path = "data/processed/BIO_clim_processed.xlsx")
 
 
 
 
 
 
-# Some visualizing
 
+# Visualizing some variables
+##############################################################################################
+
+# Making a summary table
 
 summary <- weather %>% 
   mutate(UG = as.numeric(UG)) %>% 
@@ -185,16 +198,10 @@ summary <- weather %>%
   mutate(TG = as.numeric(TG)) %>% 
   drop_na(UG, RH, TG) %>% 
   summarize_by_time(date, 
-                    .by = "month",
-                    mean_humidity = mean(UG, na.rm = T),
-                    mean_rainfall = mean(RH, na.rm = T),
-                    BIO1 = mean(TG, na.rm = T) /10)
-  summarize_by_time(date, 
                     .by = "year",
                     mean_humidity = mean(UG, na.rm = T),
                     mean_rainfall = mean(RH, na.rm = T),
                     BIO1 = mean(TG, na.rm = T) /10)
-
   
 # Visualize mean humidity per year
 
