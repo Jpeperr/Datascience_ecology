@@ -12,7 +12,7 @@ auto_install_package(c("tidyverse", "phenofit", "bfast", "phenocamr", "phenopix"
                        "imager", "tools", "zoo"))
 
 ### SITE CONFIGURATION
-site_ids <- c("H5R0-01","H5R0-02", "H5R0-03", "H5R0-04")
+site_ids <- c("H5R0-01", "H5R0-02", "H5R0-03", "H5R0-04")
 filter_groups <- list(
   H5 = "H5_filter"
 )
@@ -62,9 +62,27 @@ for (site in site_ids) {
   # Get image files
   all_images <- list.files(img_folder, pattern = "\\.JPG$", full.names = TRUE)
   bad_images <- list.files(filter_folder, pattern = "\\.JPG$", full.names = FALSE)
-  image_files <- all_images[!basename(all_images) %in% bad_images]
   
-  cat(" Total:", length(all_images), " | Filtered:", length(bad_images), " | Used:", length(image_files), "\n")
+  # Remove bad images
+  valid_images <- all_images[!basename(all_images) %in% bad_images]
+  
+  # Create a dataframe with image paths and extracted dates
+  image_data <- tibble(
+    file = valid_images,
+    date = str_extract(basename(valid_images), "\\d{4}-\\d{2}-\\d{2}") %>% as.Date()
+  ) %>%
+    filter(!is.na(date)) %>%
+    mutate(
+      week = format(date, "%Y-%U"),
+      weekday = weekdays(date)
+    ) %>%
+    group_by(week) %>%
+    filter(weekday == "Monday") %>%
+    ungroup()
+  
+  # Final image list for analysis
+  image_files <- image_data$file
+  cat(" Selected Monday images:", length(image_files), "\n")
   
   use_input_roi <- readline(prompt = paste0("Use predefined ROI for site ", site, "? (y/n): "))
   
@@ -110,6 +128,4 @@ for (site in names(site_paths)) {
 }
 
 cat("All sites processed successfully!\n")
-
-
 
