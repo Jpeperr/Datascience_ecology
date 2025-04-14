@@ -24,10 +24,20 @@ weather <- weather %>%
   select(date, everything())
 
 
-# Split the YYYYMMDD columns into "year", "month" and "day" for later use
+# Split the YYYYMMDD columns into 
+# "year", "month", "day", "quarter and "season" for later use
 weather <- weather %>% 
-  mutate(year = year(date), month = month(date), day = day(date), quarter = quarter(date)) %>% 
-  select(date, year, month, day, quarter, everything())
+  mutate(year = year(date), month = month(date), day = day(date), 
+         quarter = quarter(date)) %>% 
+  mutate(
+    season = case_when(
+      month %in% 3:5 ~ "Spring",
+      month %in% 6:8 ~ "Summer",
+      month %in% 9:11 ~ "Autumn", 
+      month %in% c(12, 1, 2) ~ "Winter" 
+    )) %>% 
+  select(date, year, month, day, quarter, season, everything())
+  
 
 
 # Remove spaces in the titles of the columns
@@ -44,7 +54,7 @@ weather <- weather %>%
 
 weather <- weather %>%
   mutate(across(
-    .cols = -c(date, month, year, day, quarter),
+    .cols = -c(date, month, year, day, quarter, season),
     .fns = ~ as.numeric(.)
   )) 
 
@@ -166,6 +176,21 @@ BIO16_19_data <- quarterly_weather %>%
     .groups = 'drop'
   )
 
+# Summarize mean temperature and precipiation per season
+seasonal_weather <- weather %>%
+  group_by(year, season) %>%
+  summarize(
+    t.mean = mean(TG, na.rm = TRUE),
+    prec.sum = sum(RH, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  pivot_wider(
+    names_from = season,
+    values_from = c(t.mean, prec.sum),
+    names_glue = "{.value}_{season}"
+  )
+
+
 # 5. Merge everything together
 BIO_summary <- annual_weather %>%
   left_join(BIO2_data, by = "year") %>%
@@ -174,11 +199,14 @@ BIO_summary <- annual_weather %>%
   left_join(BIO7_data %>% select(year, BIO7), by = "year") %>%
   left_join(BIO8_11_data, by = "year") %>%
   left_join(BIO13_14_data, by = "year") %>%
-  left_join(BIO16_19_data, by = "year")
+  left_join(BIO16_19_data, by = "year") %>% 
+  left_join(seasonal_weather, by = "year")
 
 # 6. Remove the years before 2012 and after 2020
 BIO_summary <- BIO_summary %>% 
   filter(year >= 2012, year <= 2020)
+
+
 
 # 7. Export the table to excel
 write_xlsx(BIO_summary, 
@@ -230,7 +258,6 @@ summary %>% plot_time_series(
   .date_var = date, BIO1,
   .smooth = T
 )
-
 
 
 
