@@ -8,6 +8,7 @@ auto_install_package <- function(package_names_list){
   }
 }
 
+
 auto_install_package(c("tidyverse", "phenofit", "bfast", "phenocamr", "phenopix",
                        "imager", "tools", "zoo"))
 
@@ -86,7 +87,7 @@ for (site in site_ids) {
 cat("\n✅ Done processing all sites!\n")
 
 # Load the computed Vegetation Index (VI) data ----
-load("data/processed/vi_output/")
+load("data/processed/vi_output/H5R0-01/H5R0-01VI.Rdata")
 VI.data
 str(VI.data$RO1) 
 
@@ -116,8 +117,8 @@ vi_2019_RO2 <- RO2 %>%
   filter(year(date) == 2019) %>%
   arrange(date) 
 
-gcc_2019_RO1 <- zoo(vi_2019_RO1$g.av, order.by = vi_season$date)
-gcc_2019_RO2 <- zoo(vi_2019_RO2$g.av, order.by = vi_season$date)
+gcc_2019_RO1 <- zoo(vi_2019_RO1$g.av, order.by = vi_2019_RO1$date)
+gcc_2019_RO2 <- zoo(vi_2019_RO2$g.av, order.by = vi_2019_RO2$date)
 
 # Now try greenExplore!
 explored_RO1 <- greenExplore(gcc_2019_RO1)
