@@ -176,6 +176,7 @@ print(BIO_summary)
 
 
 
+# Some visualizing
 
 
 summary <- weather %>% 
