@@ -13,7 +13,7 @@ setwd("C:/Users/Luuk/OneDrive -
 weather <- read_delim("data/raw/Deel_airport_weather_data/etmgeg_275_without_metadata.txt", 
                       delim = ",") 
 
-# Data wrangling
+# Data wrangling on raw data
 ##############################################################################################
 
 # Convert the YYYYMMDD column to a R date object and rename to "date"
@@ -40,16 +40,15 @@ weather <- weather %>%
 weather <- weather %>%
   mutate(across(where(is.character), ~ na_if(trimws(.x), "")))
 
-# Making new weather variabls using WorldClim weather statistics
-##############################################################################################
-
-# 1. Prepare data
+# Making the variables numeric expect the dates
 
 weather <- weather %>%
   mutate(across(
     .cols = -c(date, month, year, day, quarter),
     .fns = ~ as.numeric(.)
-  ))
+  )) 
+
+# Convert some variables to appropriate units
 
 weather <- weather %>%
   mutate(
@@ -60,7 +59,11 @@ weather <- weather %>%
   )
 
 
-# 2. Summarize monthly
+# Making new weather variabls using WorldClim weather statistics
+##############################################################################################
+
+
+# 1. Summarize per month
 monthly_weather <- weather %>%
   group_by(year, month) %>%
   summarize(
@@ -73,7 +76,7 @@ monthly_weather <- weather %>%
     .groups = 'drop'
   )
 
-# 3. Summarize quarterly
+# 2. Summarize per quarter
 quarterly_weather <- weather %>%
   group_by(year, quarter) %>%
   summarize(
@@ -82,7 +85,7 @@ quarterly_weather <- weather %>%
     .groups = 'drop'
   )
 
-# 4. Summarize annual
+# 3. Summarize per year
 annual_weather <- weather %>%
   group_by(year) %>%
   summarize(
@@ -93,7 +96,7 @@ annual_weather <- weather %>%
     .groups = 'drop'
   )
 
-# 5. Calculate other BIO variables
+# 4. Calculate other BIO variables
 
 # BIO2: Mean Diurnal Range (Mean of monthly (max temp - min temp))
 BIO2_data <- monthly_weather %>%
@@ -163,7 +166,7 @@ BIO16_19_data <- quarterly_weather %>%
     .groups = 'drop'
   )
 
-# 6. Merge everything together
+# 5. Merge everything together
 BIO_summary <- annual_weather %>%
   left_join(BIO2_data, by = "year") %>%
   left_join(BIO3_data, by = "year") %>%
@@ -173,11 +176,11 @@ BIO_summary <- annual_weather %>%
   left_join(BIO13_14_data, by = "year") %>%
   left_join(BIO16_19_data, by = "year")
 
-# 7. Remove the years before 2012 and after 2020
+# 6. Remove the years before 2012 and after 2020
 BIO_summary <- BIO_summary %>% 
   filter(year >= 2012, year <= 2020)
 
-# 8. Export the table to excel
+# 7. Export the table to excel
 write_xlsx(BIO_summary, 
            path = "data/processed/BIO_clim_processed.xlsx")
 
