@@ -5,6 +5,13 @@ library(tidyverse) #
 library(timetk)
 library(tidymodels)
 library(writexl)
+library(phenofit)
+library(bfast)
+library(phenocamr)
+library(phenopix)
+library(imager)
+library(zoo)
+library(tools)
 
 # Load the data in a tibble
 setwd("C:/Users/Luuk/OneDrive - 
@@ -213,7 +220,35 @@ write_xlsx(BIO_summary,
            path = "data/processed/BIO_clim_processed.xlsx")
 
 
+# Combine with the phenophase metrics
+##############################################################################################
 
+# Load in the vegetation indexes
+load("data/processed/vi_output/vi_output/H5R0-01/H5R0-01VI.Rdata")
+
+
+vi <- VI.data$RO1 %>% 
+  as.tibble() %>% 
+  mutate(gcc = g.av / (r.av + g.av + b.av), 
+         year = year(date), 
+         date = as.Date(date)) %>% 
+  distinct() %>% 
+  drop_na(gcc) %>% 
+  arrange(date) %>% 
+  filter(year == 2015)
+
+
+zoo <- zoo(vi$gcc,
+           order.by = vi$date)
+
+explored_RO1 <- greenExplore(zoo)
+
+# Analysis
+##############################################################################################
+
+fake_data <- read_delim("data/processed/BIO_clim_processed_with_fake_data.csv")
+
+ggplot
 
 
 # Visualizing some variables
