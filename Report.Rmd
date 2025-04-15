@@ -35,6 +35,7 @@ Images from the same site contain depictions of multiple vegetation types. To fa
 #### 2. Filtering out deviating images. 
 The habitat we have decided to analyse further regarding influences of weather on vegetation phenology is habitat 5, Oak scrublands and forest cultures. We´re focusing on site 1 which is unrestricted. In general an unrestricted site refers to a specific area that does not have restrictions regarding access, usage or activities. The data consists of 2405 images taken at noon every day from 2013/07/10 to 2020/03/25. To do the times series analysis the deviating images need to be filtered out. Issues like bad weather conditions, low illumination and dirty lenses create noise in the data set. We decided due to simplicity to filter out the deviating images manually. 
 
+#### 3. Curve 
 
 
 
