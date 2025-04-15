@@ -215,7 +215,7 @@ BIO_summary <- BIO_summary %>%
 
 
 
-# 7. Export the table to excel
+# 7. Export the table to csv
 write_csv(BIO_summary, 
            file = "data/processed/BIO_clim_processed.csv")
 
