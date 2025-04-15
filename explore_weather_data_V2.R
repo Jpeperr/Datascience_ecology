@@ -216,8 +216,8 @@ BIO_summary <- BIO_summary %>%
 
 
 # 7. Export the table to excel
-write_xlsx(BIO_summary, 
-           path = "data/processed/BIO_clim_processed.xlsx")
+write_csv(BIO_summary, 
+           file = "data/processed/BIO_clim_processed.csv")
 
 
 # Combine with the phenophase metrics
@@ -248,7 +248,12 @@ explored_RO1 <- greenExplore(zoo)
 
 fake_data <- read_delim("data/processed/BIO_clim_processed_with_fake_data.csv")
 
-ggplot
+ggplot(fake_data, aes(x = prec.sum_Spring, y = Greenup)) +
+  geom_point()
+
+lm <- lm(Greenup ~ prec.sum_Spring, data = fake_data)
+plot(lm)
+summary(lm)
 
 
 # Visualizing some variables
